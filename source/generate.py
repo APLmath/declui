@@ -5,16 +5,14 @@ class_name      = ~"[A-Z][a-z]*"
 field_name      = ~"[a-z]+(_[a-z]+)*"
 
 int_literal     = ~"-?\\d+"
-atom            = "this" / int_literal / ("(" expr ")")
+atom            = ("this" ("." field_name)+) / int_literal / ("(" expr ")")
 expr            = or_test
 or_test         = and_test / (or_test "||" and_test)
 and_test        = not_test / (and_test "&&" not_test)
 not_test        = comparison / ("!" not_test)
 comparison      = a_expr / (a_expr ("<" / "<=" / ">" / ">=" / "==" / "!=") a_expr)
 a_expr          = m_expr / (a_expr ("+" / "-") m_expr)
-m_expr          = primary / (m_expr "*" primary)
-primary         = atom / attribute_ref
-attribute_ref   = primary "." field_name
+m_expr          = atom / (m_expr "*" atom)
 
 WS = ~"[ \\t\\r\\n]+"
 """

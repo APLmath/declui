@@ -20,7 +20,7 @@ WS = ~"[ \\t\\r\\n]+"
 DATA_GRAMMAR_TEXT = """
 class_decl_list = WS? (class_decl WS?)*
 class_decl      = "class " class_name " {" field_decl_list? "}"
-field_decl_list = WS? field_decl (WS field_decl)* WS?
+field_decl_list = WS? (field_decl WS?)*
 field_decl      = field_type WS field_name ";"
 field_type      = "bool" / "int" / "string" / class_name
 """ + COMMON_GRAMMAR_TEXT

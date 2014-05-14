@@ -1,4 +1,5 @@
-import run
+import grammar
+import generator
 
 SAMPLE_DATA = """
 class Address {
@@ -28,4 +29,7 @@ SAMPLE_TEMPLATE = """
 {/template}
 """
 
-run.run(SAMPLE_DATA, SAMPLE_TEMPLATE)
+a = grammar.DATA_GRAMMAR.parse(SAMPLE_DATA)
+b = grammar.TEMPLATE_GRAMMAR.parse(SAMPLE_TEMPLATE)
+
+g = generator.Generator(SAMPLE_DATA, SAMPLE_TEMPLATE)

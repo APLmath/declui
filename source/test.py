@@ -1,4 +1,4 @@
-import grammar
+import run
 
 SAMPLE_DATA = """
 class Address {
@@ -27,3 +27,5 @@ SAMPLE_TEMPLATE = """
 </div>
 {/template}
 """
+
+run.run(SAMPLE_DATA, SAMPLE_TEMPLATE)

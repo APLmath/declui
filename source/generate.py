@@ -17,11 +17,12 @@ field_type      = "bool" / "int" / "string" / class_name
 
 TEMPLATE_GRAMMAR = """
 template_decl_list = WS? (template_decl WS?)*
-template_decl        = "{template " class_name "." template_name "}" element_list "{/template}"
-template_name        = ~"[a-z]+([A-Z][a-z]*)*"
-element_list         = (div_element / text_element / WS)*
-div_element          = "<div>" element_list "</div>"
-text_element         = ~"[A-Z0-9][A-Z 0-9]*[A-Z0-9]|[A-Z0-9]"i
+template_decl      = "{template " class_name "." template_name "}" element_list "{/template}"
+template_name      = ~"[a-z]+([A-Z][a-z]*)*"
+element_list       = (div_element / if_element / text_element / WS)*
+div_element        = "<div>" element_list "</div>"
+if_element         = "{if}" element_list ("{else}" element_list)? "{/if}"
+text_element       = ~"[A-Z0-9][A-Z 0-9]*[A-Z0-9]|[A-Z0-9]"i
 """ + COMMON_GRAMMAR
 
 SAMPLE_DATA = """
@@ -44,6 +45,9 @@ SAMPLE_TEMPLATE = """
 <div>
   <div>
     Hello there
+    {if}
+      Blah
+    {/if}
   </div>
 </div>
 {/template}

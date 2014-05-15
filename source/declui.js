@@ -5,10 +5,10 @@ declui.template = {};
 declui.template.List = function(templateArray) {
   this.templateArray = templateArray;
 };
-declui.template.List.prototype.generate = function(state, container) {
+declui.template.List.prototype.generate = function(state) {
   var domArray = [];
   for (var i = 0; i < this.templateArray.length; i++) {
-    domArray.push(this.templateArray[i].generate(state, container));
+    domArray.push(this.templateArray[i].generate(state));
   }
   return new declui.dom.List(domArray);
 };
@@ -16,8 +16,8 @@ declui.template.List.prototype.generate = function(state, container) {
 declui.template.Div = function(templateList) {
   this.templateList = templateList;
 };
-declui.template.Div.prototype.generate = function(state, container) {
-  return new declui.dom.Div(this.templateList.generate(state, container));
+declui.template.Div.prototype.generate = function(state) {
+  return new declui.dom.Div(this.templateList.generate(state));
 };
 
 declui.template.If = function(boolTest, templateListTrue, templateListFalse) {
@@ -25,25 +25,25 @@ declui.template.If = function(boolTest, templateListTrue, templateListFalse) {
   this.templateListTrue = templateListTrue;
   this.templateListFalse = templateListFalse;
 };
-declui.template.If.prototype.generate = function(state, container) {
+declui.template.If.prototype.generate = function(state) {
   var boolResult = this.boolTest(state);
   return new declui.dom.If(this.boolTest, this.templateListTrue,
       this.templateListFalse, boolResult,
       (boolResult ? this.templateListTrue : this.templateListFalse).
-          generate(state, container));
+          generate(state));
 };
 
 declui.template.Val = function(expression) {
   this.expression = expression;
 };
-declui.template.Val.prototype.generate = function(state, container) {
+declui.template.Val.prototype.generate = function(state) {
   return new declui.dom.Val(this.expression, this.expression(state));
 };
 
 declui.template.Text = function(string) {
   this.string = string;
 };
-declui.template.Text.prototype.generate = function(state, container) {
+declui.template.Text.prototype.generate = function(state) {
   return new declui.dom.Text(this.string);
 };
 
@@ -100,7 +100,7 @@ declui.dom.If.prototype.mutate = function(state, container, lastChildNode) {
     this.currentBoolResult = boolResult;
     this.domList =
         (boolResult ? this.templateListTrue : this.templateListFalse)
-            .generate(state, container);
+            .generate(state);
     for (var i = 0; i < this.nodeList.length; i++) {
       container.removeChild(this.nodeList[i]);
     }

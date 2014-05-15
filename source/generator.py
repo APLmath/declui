@@ -2,6 +2,16 @@ from parsimonious.nodes import NodeVisitor
 
 import grammar
 
+boilerplateHTML = """<!DOCTYPE html>
+<head>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<script src="./declui.js"></script>
+<script>
+%s
+</script>
+</head>
+"""
+
 class Class(object):
   def __init__(self, class_decl_tree):
     self.__class_decl_tree = class_decl_tree
@@ -381,9 +391,10 @@ class Generator(object):
 
   def initializeWith(self, template_name, initialText):
     tree = grammar.INITIAL_GRAMMAR.parse(initialText)
-    return self.boilerplateJS + ("""
+    allJS = self.boilerplateJS + ("""
 declui.global.initialize(declui.%s, %s);
 """ % (template_name, InitialVisitor(self.classes).visit(tree)))
+    return boilerplateHTML % allJS
 
 class InitialVisitor(NodeVisitor):
   def __init__(self, classes):

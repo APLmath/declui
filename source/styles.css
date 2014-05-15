@@ -1,0 +1,11 @@
+body > div {
+  border: 2px solid black;
+  display: inline-block;
+  padding: 20px 20px 40px 20px;
+}
+
+body > div > div:nth-child(1) {
+  font-size: 2em;
+  font-weight: bold;
+  padding-bottom: 10px;
+}

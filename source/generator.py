@@ -57,6 +57,9 @@ class TemplateList(Template):
   def __init__(self, template_array):
     self.template_array = template_array
 
+  def emitJS(self):
+    return 'new declui.template.List([' + ','.join(map(lambda template: template.emitJS(), self.template_array)) + '])'
+
   def __str__(self):
     return 'List(' + ','.join(map(str,self.template_array)) + ')'
 
@@ -64,13 +67,20 @@ class TemplateDiv(Template):
   def __init__(self, template_list):
     self.template_list = template_list
 
+  def emitJS(self):
+    return 'new declui.template.Div(' + self.template_list.emitJS() + ')'
+
   def __str__(self):
     return 'Div(' + str(self.template_list) + ')'
 
 class TemplateIf(Template):
-  def __init__(self, template_list_true, template_list_false):
+  def __init__(self, bool_expr, template_list_true, template_list_false):
+    self.bool_expr = bool_expr
     self.template_list_true = template_list_true
     self.template_list_false = template_list_false
+
+  def emitJS(self):
+    return 'new declui.template.If(function(state){ return ' + self.bool_expr.emitJS() + '; },' + self.template_list_true.emitJS() + ',' + self.template_list_false.emitJS() + ')'
 
   def __str__(self):
     return 'If(' + str(self.template_list_true) + ',' + str(self.template_list_false) + ')'
@@ -79,6 +89,9 @@ class TemplateVal(Template):
   def __init__(self, expr):
     self.expr = expr
 
+  def emitJS(self):
+    return 'new declui.template.Val(function(state){ return ' + self.expr.emitJS() + '; })'
+
   def __str__(self):
     return 'Val(' + str(self.expr) + ')'
 
@@ -86,11 +99,14 @@ class TemplateText(Template):
   def __init__(self, text):
     self.text = text
 
+  def emitJS(self):
+    return 'new declui.template.Text(' + repr(self.text) + ')'
+
   def __str__(self):
     return 'Text(' + self.text + ')'
 
 def fieldNameToJS(field_name):
-  return ''.join(map(lambda word: word[0] + word[1:], field_name.split('_')))
+  return ''.join(map(lambda word: word[0].upper() + word[1:], field_name.split('_')))
 
 class CommonFieldRef(object):
   def __init__(self, base_class, field_chain):
@@ -102,7 +118,7 @@ class CommonFieldRef(object):
     self.type = type(self.type)
 
   def emitJS(self):
-    js = 'this'
+    js = 'state'
     for field_name in self.field_chain:
       js += '.get' + fieldNameToJS(field_name) + '()'
     return js
@@ -157,7 +173,7 @@ class CommonNotTest(object):
     self.comparison = comparison
 
   def emitJS(self):
-    return '!' + self.comparison.emitJS()
+    return '!(' + self.comparison.emitJS() + ')'
 
   def getType(self):
     return Bool
@@ -272,12 +288,12 @@ class TemplateVisitor(CommonVisitor):
   def visit_div_element(self, node, (_1, element_list, _2)):
     return TemplateDiv(element_list)
 
-  def visit_if_element(self, node, (_1, true_element_list, false_element_list, _2)):
+  def visit_if_element(self, node, (_1, expr, _2, true_element_list, false_element_list, _3)):
     if type(false_element_list) is list:
       false_element_list = false_element_list[0][1]
     else:
       false_element_list = TemplateList([])
-    return TemplateIf(true_element_list, false_element_list)
+    return TemplateIf(expr, true_element_list, false_element_list)
 
   def visit_val_element(self, node, (_1, expr, _2)):
     return TemplateVal(expr)

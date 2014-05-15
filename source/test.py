@@ -22,10 +22,10 @@ SAMPLE_TEMPLATE = """
   <div>
     {{this.home_address.city}}
     {{!this.is_intern>this.is_intern}}
-    {if}
+    {if 11}
       Blah
     {else}
-      {if}
+      {if 44}
         Deep
       {/if}
     {/if}
@@ -38,3 +38,6 @@ a = grammar.DATA_GRAMMAR.parse(SAMPLE_DATA)
 b = grammar.TEMPLATE_GRAMMAR.parse(SAMPLE_TEMPLATE)
 
 g = generator.Generator(SAMPLE_DATA, SAMPLE_TEMPLATE)
+
+print g.classes['Employee'].templates['businessCard']
+print g.classes['Employee'].templates['businessCard'].emitJS()

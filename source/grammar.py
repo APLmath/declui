@@ -32,7 +32,7 @@ template_decl      = "{template " class_name "." template_name "}" element_list 
 template_name      = ~"[a-z]+([A-Z][a-z]*)*"
 element_list       = (div_element / if_element / val_element / text_element / WS)*
 div_element        = "<div>" element_list "</div>"
-if_element         = "{if}" element_list ("{else}" element_list)? "{/if}"
+if_element         = "{if " expr "}" element_list ("{else}" element_list)? "{/if}"
 val_element        = "{{" expr "}}"
 text_element       = ~"[A-Z 0-9]+"i
 """ + COMMON_GRAMMAR_TEXT

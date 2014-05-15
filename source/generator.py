@@ -120,6 +120,85 @@ class CommonIntLiteral(object):
   def getType(self):
     return Int
 
+class CommonParenExpr(object):
+  def __init__(self, expr):
+    self.expr = expr
+
+  def emitJS(self):
+    return '(' + self.expr.emitJS() + ')'
+
+  def getType(self):
+    return self.expr.getType()
+
+class CommonOrTest(object):
+  def __init__(self, and_test1, and_test2):
+    self.and_test1 = and_test1
+    self.and_test2 = and_test2
+
+  def emitJS(self):
+    return self.and_test1.emitJS() + '||' + self.and_test2.emitJS()
+
+  def getType(self):
+    return Bool
+
+class CommonAndTest(object):
+  def __init__(self, not_test1, not_test2):
+    self.not_test1 = not_test1
+    self.not_test2 = not_test2
+
+  def emitJS(self):
+    return self.not_test1.emitJS() + '&&' + self.not_test2.emitJS()
+
+  def getType(self):
+    return Bool
+
+class CommonNotTest(object):
+  def __init__(self, comparison):
+    self.comparison = comparison
+
+  def emitJS(self):
+    return '!' + self.comparison.emitJS()
+
+  def getType(self):
+    return Bool
+
+class CommonComparison(object):
+  def __init__(self, a_expr1, op, a_expr2):
+    self.a_expr1 = a_expr1
+    self.op = op
+    self.a_expr2 = a_expr2
+
+  def emitJS(self):
+    return self.a_expr1.emitJS() + self.op + self.a_expr2.emitJS()
+
+  def getType(self):
+    return Bool
+
+class CommonAExpr(object):
+  def __init__(self, m_expr1, op, m_expr2):
+    print op
+    self.m_expr1 = m_expr1
+    self.op = op
+    self.m_expr2 = m_expr2
+
+  def emitJS(self):
+    return self.m_expr1.emitJS() + self.op + self.m_expr2.emitJS()
+
+  def getType(self):
+    return Int
+
+class CommonMExpr(object):
+  def __init__(self, atom1, op, atom2):
+    print op
+    self.atom1 = atom1
+    self.op = op
+    self.atom2 = atom2
+
+  def emitJS(self):
+    return self.atom1.emitJS() + self.op + self.atom2.emitJS()
+
+  def getType(self):
+    return Int
 
 class CommonVisitor(NodeVisitor):
   def __init__(self, base_class):
@@ -138,11 +217,44 @@ class CommonVisitor(NodeVisitor):
     return atom[0]
 
   def visit_paren_expr(self, node, (_1, expr, _2)):
-    return expr
+    return CommonParenExpr(expr)
 
-  def visit_expr(self, node, (expr)):
-    print expr
-    return expr
+  def visit_expr(self, node, (and_test, other_and_tests)):
+    currentExpr = and_test
+    for other_and_test in other_and_tests:
+      currentExpr = CommonOrTest(currentExpr, other_and_test[1])
+    return currentExpr
+
+  def visit_and_test(self, node, (not_test, other_not_tests)):
+    currentExpr = not_test
+    for other_not_test in other_not_tests:
+      currentExpr = CommonAndTest(currentExpr, other_not_test[1])
+    return currentExpr
+
+  def visit_not_test(self, node, (comparison)):
+    comparison = comparison[0]
+    if type(comparison) is list:
+      return CommonNotTest(comparison[1])
+    else:
+      return comparison
+
+  def visit_comparison(self, node, (a_expr, other_a_exprs)):
+    currentExpr = a_expr
+    for other_a_expr in other_a_exprs:
+      currentExpr = CommonComparison(currentExpr, other_a_expr[0][0].text, other_a_expr[1])
+    return currentExpr
+
+  def visit_a_expr(self, node, (m_expr, other_m_exprs)):
+    currentExpr = m_expr
+    for other_m_expr in other_m_exprs:
+      currentExpr = CommonAExpr(currentExpr, other_m_expr[0][0].text, other_m_expr[1])
+    return currentExpr
+
+  def visit_m_expr(self, node, (atom, other_atoms)):
+    currentExpr = atom
+    for other_atom in other_atoms:
+      currentExpr = CommonMExpr(currentExpr, other_atom[0][0].text, other_atom[1])
+    return currentExpr
 
   def visit_WS(self, node, _):
     return None

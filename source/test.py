@@ -21,7 +21,7 @@ SAMPLE_TEMPLATE = """
 <div>
   <div>
     {{this.home_address.city}}
-    {{this.is_intern||this.is_intern}}
+    {{!this.is_intern>this.is_intern}}
     {if}
       Blah
     {else}

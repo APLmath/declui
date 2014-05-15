@@ -2,29 +2,81 @@
 <head>
 <script src="./declui.js"></script>
 <script>
-var temp = new declui.template.List([
-  new declui.template.Div(new declui.template.List([
-    new declui.template.Text('Title'),
-    new declui.template.Text(' Extended!')
-  ])),
-  new declui.template.If(
-    function(state) { return state > 0 },
-    new declui.template.Div(new declui.template.List([
-      new declui.template.Text('Header'),
-      new declui.template.Div(new declui.template.List([
-        new declui.template.Text('The state times 2: '),
-        new declui.template.Val(
-          function(state) { return state * 2 }
-        )
-      ]))
-    ])),
-    new declui.template.Text('No items... :(')
-  ),
-  new declui.template.Div(new declui.template.List([
-    new declui.template.Text('Footer')
-  ]))
-]);
 
-declui.global.initialize(temp, 0);
+declui.Employee = function(YearsOfExperience, HomeAddress, Name, IsIntern) {
+  this.YearsOfExperience = YearsOfExperience;
+  this.HomeAddress = HomeAddress;
+  this.Name = Name;
+  this.IsIntern = IsIntern;
+};
+
+declui.Employee.prototype.getYearsOfExperience = function() {
+  return this.YearsOfExperience;
+};
+
+declui.Employee.prototype.setYearsOfExperience = function(YearsOfExperience) {
+  this.YearsOfExperience = YearsOfExperience;
+};
+
+declui.Employee.prototype.getHomeAddress = function() {
+  return this.HomeAddress;
+};
+
+declui.Employee.prototype.setHomeAddress = function(HomeAddress) {
+  this.HomeAddress = HomeAddress;
+};
+
+declui.Employee.prototype.getName = function() {
+  return this.Name;
+};
+
+declui.Employee.prototype.setName = function(Name) {
+  this.Name = Name;
+};
+
+declui.Employee.prototype.getIsIntern = function() {
+  return this.IsIntern;
+};
+
+declui.Employee.prototype.setIsIntern = function(IsIntern) {
+  this.IsIntern = IsIntern;
+};
+
+declui.Employee.businessCard = new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Val(function(state){ return state.getName(); })])),new declui.template.Div(new declui.template.List([new declui.template.If(function(state){ return state.getYearsOfExperience()>4; },new declui.template.List([new declui.template.Text('Senior ')]),new declui.template.List([])),new declui.template.If(function(state){ return state.getIsIntern(); },new declui.template.List([new declui.template.Text('Engineering Intern')]),new declui.template.List([new declui.template.Text('Engineer from '),new declui.template.Val(function(state){ return state.getHomeAddress().getCity(); })]))]))]))]);
+
+
+
+
+declui.Address = function(City, Street, Number) {
+  this.City = City;
+  this.Street = Street;
+  this.Number = Number;
+};
+
+declui.Address.prototype.getCity = function() {
+  return this.City;
+};
+
+declui.Address.prototype.setCity = function(City) {
+  this.City = City;
+};
+
+declui.Address.prototype.getStreet = function() {
+  return this.Street;
+};
+
+declui.Address.prototype.setStreet = function(Street) {
+  this.Street = Street;
+};
+
+declui.Address.prototype.getNumber = function() {
+  return this.Number;
+};
+
+declui.Address.prototype.setNumber = function(Number) {
+  this.Number = Number;
+};
+
+
 </script>
 </head>

@@ -20,14 +20,16 @@ SAMPLE_TEMPLATE = """
 {template Employee.businessCard}
 <div>
   <div>
-    {{this.home_address.city}}
-    {{!this.is_intern>this.is_intern}}
-    {if 11}
-      Blah
+    {{this.name}}
+  </div>
+  <div>
+    {if this.years_of_experience>4}
+      Senior 
+    {/if}
+    {if this.is_intern}
+      Engineering Intern
     {else}
-      {if 44}
-        Deep
-      {/if}
+      Engineer from {{this.home_address.city}}
     {/if}
   </div>
 </div>
@@ -39,5 +41,5 @@ b = grammar.TEMPLATE_GRAMMAR.parse(SAMPLE_TEMPLATE)
 
 g = generator.Generator(SAMPLE_DATA, SAMPLE_TEMPLATE)
 
-print g.classes['Employee'].templates['businessCard']
-print g.classes['Employee'].templates['businessCard'].emitJS()
+for c in g.classes:
+  print g.classes[c].emitJS()

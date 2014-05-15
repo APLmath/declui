@@ -30,12 +30,40 @@ class Class(object):
   def getTemplate(self, template_name):
     return self.templates[template_name]
 
+  def emitJS(self):
+    args = ', '.join(map(fieldNameToJS, self.fields.keys()))
+    field_decls = '\n'.join(map(lambda field: '  this.' + field + ' = ' + field + ';', map(fieldNameToJS, self.fields.keys())))
+    js = """
+declui.%s = function(%s) {
+%s
+};
+""" % (self.name, args, field_decls)
+    for field in self.fields.keys():
+      field = fieldNameToJS(field)
+      js += """
+declui.%s.prototype.get%s = function() {
+  return this.%s;
+};
+
+declui.%s.prototype.set%s = function(%s) {
+  this.%s = %s;
+};
+""" % (self.name, field, field, self.name, field, field, field, field)
+    for template in self.templates.keys():
+      js += """
+declui.%s.%s = %s;
+""" % (self.name, template, self.templates[template].emitJS())
+    return js
+
 class Primitive(Class):
   def __init__(self):
     pass
 
   def __contains__(self, field):
     return False
+
+  def emitJS(self):
+    return ''
 
   def finishSetup(self, classes):
     pass

@@ -5,9 +5,10 @@ class_name      = ~"[A-Z][a-z]*"
 field_name      = ~"[a-z]+(_[a-z]+)*"
 
 int_literal     = ~"-?\\d+"
-atom            = ("this" ("." field_name)+) / int_literal / ("(" expr ")")
-expr            = or_test
-or_test         = and_test / (or_test "||" and_test)
+atom            = field_ref / int_literal / paren_expr
+field_ref       = "this" ("." field_name)+
+paren_expr      = "(" expr ")"
+expr            = and_test / (expr "||" and_test)
 and_test        = not_test / (and_test "&&" not_test)
 not_test        = comparison / ("!" not_test)
 comparison      = a_expr / (a_expr ("<" / "<=" / ">" / ">=" / "==" / "!=") a_expr)

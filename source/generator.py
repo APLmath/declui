@@ -7,6 +7,7 @@ class Class(object):
     self.__class_decl_tree = class_decl_tree
     self.name = class_decl_tree.children[1].text
     self.fields = {}
+    self.templates = {}
 
   def __getitem__(self, field):
     return self.fields[field]
@@ -22,6 +23,12 @@ class Class(object):
       field_type = classes[field_decl.children[0].text]
       field_name = field_decl.children[2].text
       self.fields[field_name] = field_type
+
+  def addTemplate(self, template_name, template):
+    self.templates[template_name] = template
+
+  def getTemplate(self, template_name):
+    return self.templates[template_name]
 
 class Primitive(Class):
   def __init__(self):
@@ -51,7 +58,7 @@ class TemplateList(Template):
     self.template_array = template_array
 
   def __str__(self):
-    return ','.join(map(str,self.template_array))
+    return 'List(' + ','.join(map(str,self.template_array)) + ')'
 
 class TemplateDiv(Template):
   def __init__(self, template_list):
@@ -82,10 +89,29 @@ class TemplateText(Template):
   def __str__(self):
     return 'Text(' + self.text + ')'
 
-class TemplateVisitor(NodeVisitor):
+
+class CommonFieldRef(object):
+  def __init__(self, base_class, field_chain):
+    self.base_class = base_class
+    self.field_chain = field_chain
+
+
+
+
+class CommonVisitor(NodeVisitor):
+  def visit_field_ref(self, node, (_, field_names)):
+    print '\n'*8
+    print field_names
+    print '\n'*8
+    return node
+
+  def visit_expr(self, node, (or_test,)):
+    return or_test
+
   def visit_WS(self, node, _):
     return None
 
+class TemplateVisitor(CommonVisitor):
   def visit_template_decl(self, node, (_1, class_name, _2, template_name, _3, element_list, _4)):
     return (class_name.text, template_name.text, str(element_list))
 
@@ -99,17 +125,27 @@ class TemplateVisitor(NodeVisitor):
     return TemplateDiv(element_list)
 
   def visit_if_element(self, node, (_1, true_element_list, false_element_list, _2)):
-    if false_element_list.children:
-      false_element_list = false_element_list.children[1]
+    if type(false_element_list) is list:
+      false_element_list = false_element_list[0][1]
     else:
       false_element_list = TemplateList([])
     return TemplateIf(true_element_list, false_element_list)
 
   def visit_val_element(self, node, (_1, expr, _2)):
-    return TemplateVal(node.text)
+    return TemplateVal(expr)
 
   def visit_text_element(self, node, (text)):
     return TemplateText(node.text)
+
+  def generic_visit(self, node, visited_children):
+    return visited_children or node
+
+class TemplateVisitorFirstPass(NodeVisitor):
+  def visit_template_decl_list(self, node, (_1, template_decls)):
+    return map(lambda n: n[0], template_decls)
+
+  def visit_template_decl(self, node, visited_children):
+    return node
 
   def generic_visit(self, node, visited_children):
     return visited_children or node
@@ -121,9 +157,6 @@ class Generator(object):
       'int': Int(),
       'string': String()
     }
-    tree = grammar.TEMPLATE_GRAMMAR.parse(template_text)
-
-    print TemplateVisitor().visit(tree)
 
     # Parse the data model.
     try:
@@ -141,6 +174,7 @@ class Generator(object):
     try:
       tree = grammar.TEMPLATE_GRAMMAR.parse(template_text)
 
-      print TemplateVisitor().visit(tree)
+      for (class_name, template_name, template) in TemplateVisitor().visit(tree):
+        self.classes[class_name].addTemplate(template_name, template)
     except Exception as e:
       raise e

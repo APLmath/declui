@@ -20,13 +20,13 @@ SAMPLE_TEMPLATE = """
 {template Employee.businessCard}
 <div>
   <div>
-    {{this.name}}
+    {{this.home_address.city}}
     {if}
       Blah
     {else}
       {if}
         Deep
-      {/if}   
+      {/if}
     {/if}
   </div>
 </div>

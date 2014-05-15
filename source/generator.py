@@ -1,3 +1,5 @@
+from parsimonious.nodes import NodeVisitor
+
 import grammar
 
 class Class(object):
@@ -25,6 +27,9 @@ class Primitive(Class):
   def __init__(self):
     pass
 
+  def __contains__(self, field):
+    return False
+
   def finishSetup(self, classes):
     pass
 
@@ -35,6 +40,9 @@ class Int(Primitive):
   pass
 
 class String(Primitive):
+  pass
+
+class Template(object):
   pass
 
 class Generator(object):

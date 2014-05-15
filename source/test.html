@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+<script src="./declui.js"></script>
+<script>
+var temp = new declui.template.List([
+  new declui.template.Div(new declui.template.List([
+    new declui.template.Text('Title'),
+    new declui.template.Text(' Extended!')
+  ])),
+  new declui.template.If(
+    function(state) { return state > 0 },
+    new declui.template.Div(new declui.template.List([
+      new declui.template.Text('Header'),
+      new declui.template.Div(new declui.template.List([
+        new declui.template.Text('Item 1'),
+        new declui.template.Text('Item 2')
+      ]))
+    ])),
+    new declui.template.Text('No items... :(')
+  ),
+  new declui.template.Div(new declui.template.List([
+    new declui.template.Text('Footer')
+  ]))
+]);
+
+declui.global.initialize(temp, 0);
+</script>
+</head>

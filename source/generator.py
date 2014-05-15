@@ -43,7 +43,76 @@ class String(Primitive):
   pass
 
 class Template(object):
-  pass
+  def emitJS(self):
+    pass
+
+class TemplateList(Template):
+  def __init__(self, template_array):
+    self.template_array = template_array
+
+  def __str__(self):
+    return ','.join(map(str,self.template_array))
+
+class TemplateDiv(Template):
+  def __init__(self, template_list):
+    self.template_list = template_list
+
+  def __str__(self):
+    return 'Div(' + str(self.template_list) + ')'
+
+class TemplateIf(Template):
+  def __init__(self, template_list_true, template_list_false):
+    self.template_list_true = template_list_true
+    self.template_list_false = template_list_false
+
+  def __str__(self):
+    return 'If(' + str(self.template_list_true) + ',' + str(self.template_list_false) + ')'
+
+class TemplateVal(Template):
+  def __init__(self, expr):
+    self.expr = expr
+
+  def __str__(self):
+    return 'Val(' + str(self.expr) + ')'
+
+class TemplateText(Template):
+  def __init__(self, text):
+    self.text = text
+
+  def __str__(self):
+    return 'Text(' + self.text + ')'
+
+class TemplateVisitor(NodeVisitor):
+  def visit_WS(self, node, _):
+    return None
+
+  def visit_template_decl(self, node, (_1, class_name, _2, template_name, _3, element_list, _4)):
+    return (class_name.text, template_name.text, str(element_list))
+
+  def visit_template_decl_list(self, node, (_1, template_decls)):
+    return map(lambda n: n[0], template_decls)
+
+  def visit_element_list(self, node, (element_list)):
+    return TemplateList([element[0] for element in element_list if element[0]])
+
+  def visit_div_element(self, node, (_1, element_list, _2)):
+    return TemplateDiv(element_list)
+
+  def visit_if_element(self, node, (_1, true_element_list, false_element_list, _2)):
+    if false_element_list.children:
+      false_element_list = false_element_list.children[1]
+    else:
+      false_element_list = TemplateList([])
+    return TemplateIf(true_element_list, false_element_list)
+
+  def visit_val_element(self, node, (_1, expr, _2)):
+    return TemplateVal(node.text)
+
+  def visit_text_element(self, node, (text)):
+    return TemplateText(node.text)
+
+  def generic_visit(self, node, visited_children):
+    return visited_children or node
 
 class Generator(object):
   def __init__(self, data_text, template_text):
@@ -52,6 +121,9 @@ class Generator(object):
       'int': Int(),
       'string': String()
     }
+    tree = grammar.TEMPLATE_GRAMMAR.parse(template_text)
+
+    print TemplateVisitor().visit(tree)
 
     # Parse the data model.
     try:
@@ -62,5 +134,13 @@ class Generator(object):
         self.classes[class_decl.name] = class_decl
       for class_name in self.classes:
         self.classes[class_name].finishSetup(self.classes)
+    except Exception as e:
+      raise e
+
+    # Parse the data model.
+    try:
+      tree = grammar.TEMPLATE_GRAMMAR.parse(template_text)
+
+      print TemplateVisitor().visit(tree)
     except Exception as e:
       raise e

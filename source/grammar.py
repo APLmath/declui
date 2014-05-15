@@ -8,12 +8,12 @@ int_literal     = ~"-?\\d+"
 atom            = field_ref / int_literal / paren_expr
 field_ref       = "this" ("." field_name)+
 paren_expr      = "(" expr ")"
-expr            = and_test / (expr "||" and_test)
-and_test        = not_test / (and_test "&&" not_test)
+expr            = and_test ("||" and_test)*
+and_test        = not_test ("&&" not_test)*
 not_test        = comparison / ("!" not_test)
-comparison      = a_expr / (a_expr ("<" / "<=" / ">" / ">=" / "==" / "!=") a_expr)
-a_expr          = m_expr / (a_expr ("+" / "-") m_expr)
-m_expr          = atom / (m_expr "*" atom)
+comparison      = a_expr (("<" / "<=" / ">" / ">=" / "==" / "!=") a_expr)*
+a_expr          = m_expr (("+" / "-") m_expr)*
+m_expr          = atom ("*" atom)*
 
 WS = ~"[ \\t\\r\\n]+"
 """

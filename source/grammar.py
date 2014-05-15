@@ -37,5 +37,19 @@ val_element        = "{{" expr "}}"
 text_element       = ~"[A-Z 0-9]+"i
 """ + COMMON_GRAMMAR_TEXT
 
+INITIAL_GRAMMAR_TEXT = """
+class_instance   = WS? class_name WS? "{" (field_instance)* WS? "}" WS?
+field_instance   = WS? field_name WS? ":" WS? field_value
+field_value      = class_instance / int_literal / bool_literal / string_literal
+int_literal      = ~"-?\\d+"
+bool_literal     = ~"(true|false)"
+string_literal   = ~r'"[^"]*"'
+class_name       = ~"[A-Z][a-z]*"
+field_name       = ~"[a-z]+(_[a-z]+)*"
+
+WS = ~"[ \\t\\r\\n]+"
+"""
+
 DATA_GRAMMAR = parsimonious.grammar.Grammar(DATA_GRAMMAR_TEXT)
 TEMPLATE_GRAMMAR = parsimonious.grammar.Grammar(TEMPLATE_GRAMMAR_TEXT)
+INITIAL_GRAMMAR = parsimonious.grammar.Grammar(INITIAL_GRAMMAR_TEXT)

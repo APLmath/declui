@@ -374,3 +374,35 @@ class Generator(object):
     for class_name, template_name in templateNodes:
       self.classes[class_name].addTemplate(template_name,
           TemplateVisitor(self.classes[class_name]).visit(templateNode))
+
+    self.boilerplateJS = ''
+    for c in self.classes:
+      self.boilerplateJS += self.classes[c].emitJS()
+
+  def initializeWith(self, template_name, initialText):
+    tree = grammar.INITIAL_GRAMMAR.parse(initialText)
+    return self.boilerplateJS + ("""
+declui.global.initialize(declui.%s, %s);
+""" % (template_name, InitialVisitor(self.classes).visit(tree)))
+
+class InitialVisitor(NodeVisitor):
+  def __init__(self, classes):
+    self.classes = classes
+
+  def visit_class_instance(self, node, (_1, class_name, _2, _3, field_instances, _4, _5, _6)):
+    value_dict = {name: value for name, value in field_instances}
+    return "new declui.%s(%s)" % (class_name, ', '.join(map(lambda field_name: value_dict[field_name], self.classes[class_name].fields.keys())))
+
+  def visit_field_instance(self, node, (_1, field_name, _2, _3, _4, field_value)):
+    return (field_name, field_value)
+
+  def visit_field_value(self, node, (value)):
+    return value[0]
+
+  def pass_the_literal(self, node, (literal)):
+    return node.text
+
+  def generic_visit(self, node, visited_children):
+    return visited_children
+
+  visit_int_literal = visit_bool_literal = visit_string_literal = visit_class_name = visit_field_name = pass_the_literal

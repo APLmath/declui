@@ -1,4 +1,3 @@
-import grammar
 import generator
 
 SAMPLE_DATA = """
@@ -36,10 +35,18 @@ SAMPLE_TEMPLATE = """
 {/template}
 """
 
-a = grammar.DATA_GRAMMAR.parse(SAMPLE_DATA)
-b = grammar.TEMPLATE_GRAMMAR.parse(SAMPLE_TEMPLATE)
+SAMPLE_INITIAL = """
+Employee {
+  name: "Andrew Lee"
+  years_of_experience: 2
+  is_intern: false
+  home_address: Address{
+    number: 271
+    street: "Euler Street"
+    city: "Berkeley"
+  }
+}
+"""
 
 g = generator.Generator(SAMPLE_DATA, SAMPLE_TEMPLATE)
-
-for c in g.classes:
-  print g.classes[c].emitJS()
+print g.initializeWith('Employee.businessCard', SAMPLE_INITIAL)

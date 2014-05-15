@@ -48,9 +48,6 @@ declui.Employee.prototype.setIsIntern = function(IsIntern) {
 
 declui.Employee.businessCard = new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Val(function(state){ return state.getName(); })])),new declui.template.Div(new declui.template.List([new declui.template.If(function(state){ return state.getYearsOfExperience()>4; },new declui.template.List([new declui.template.Text('Senior ')]),new declui.template.List([])),new declui.template.If(function(state){ return state.getIsIntern(); },new declui.template.List([new declui.template.Text('Engineering Intern')]),new declui.template.List([new declui.template.Text('Engineer from '),new declui.template.Val(function(state){ return state.getHomeAddress().getCity(); })]))]))]))]);
 
-
-
-
 declui.Address = function(City, Street, Number) {
   this.City = City;
   this.Street = Street;
@@ -84,6 +81,7 @@ declui.Address.prototype.setNumber = function(Number) {
   declui.global.update();
 };
 
+declui.global.initialize(declui.Employee.businessCard, new declui.Employee(2, new declui.Address("Berkeley", "Euler Street", 271), "Andrew Lee", false));
 
 </script>
 </head>

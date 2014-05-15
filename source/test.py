@@ -22,7 +22,11 @@ SAMPLE_TEMPLATE = """
   <div>
     {{this.name}}
     {if}
-      Blah   
+      Blah
+    {else}
+      {if}
+        Deep
+      {/if}   
     {/if}
   </div>
 </div>

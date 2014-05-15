@@ -133,15 +133,17 @@ declui.dom.Text.prototype.mutate = function(state, container, lastChildNode) {
 };
 
 declui.global = {};
+declui.global.state;
 declui.global.domList;
 declui.global.initialize = function(templateList, state) {
   window.onload = function() {
+    declui.global.state = state;
     declui.global.domList = templateList.generate(state);
     for (var i = 0; i < declui.global.domList.nodeList.length; i++) {
       document.body.appendChild(declui.global.domList.nodeList[i]);
     }
   };
 }
-declui.global.mutate = function(state) {
-  declui.global.domList.mutate(state, document.body, null);
+declui.global.update = function() {
+  declui.global.domList.mutate(declui.global.state, document.body, null);
 }

@@ -47,6 +47,7 @@ declui.%s.prototype.get%s = function() {
 
 declui.%s.prototype.set%s = function(%s) {
   this.%s = %s;
+  declui.global.update();
 };
 """ % (self.name, field, field, self.name, field, field, field, field)
     for template in self.templates.keys():

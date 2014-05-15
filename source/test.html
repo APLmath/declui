@@ -16,6 +16,7 @@ declui.Employee.prototype.getYearsOfExperience = function() {
 
 declui.Employee.prototype.setYearsOfExperience = function(YearsOfExperience) {
   this.YearsOfExperience = YearsOfExperience;
+  declui.global.update();
 };
 
 declui.Employee.prototype.getHomeAddress = function() {
@@ -24,6 +25,7 @@ declui.Employee.prototype.getHomeAddress = function() {
 
 declui.Employee.prototype.setHomeAddress = function(HomeAddress) {
   this.HomeAddress = HomeAddress;
+  declui.global.update();
 };
 
 declui.Employee.prototype.getName = function() {
@@ -32,6 +34,7 @@ declui.Employee.prototype.getName = function() {
 
 declui.Employee.prototype.setName = function(Name) {
   this.Name = Name;
+  declui.global.update();
 };
 
 declui.Employee.prototype.getIsIntern = function() {
@@ -40,6 +43,7 @@ declui.Employee.prototype.getIsIntern = function() {
 
 declui.Employee.prototype.setIsIntern = function(IsIntern) {
   this.IsIntern = IsIntern;
+  declui.global.update();
 };
 
 declui.Employee.businessCard = new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Div(new declui.template.List([new declui.template.Val(function(state){ return state.getName(); })])),new declui.template.Div(new declui.template.List([new declui.template.If(function(state){ return state.getYearsOfExperience()>4; },new declui.template.List([new declui.template.Text('Senior ')]),new declui.template.List([])),new declui.template.If(function(state){ return state.getIsIntern(); },new declui.template.List([new declui.template.Text('Engineering Intern')]),new declui.template.List([new declui.template.Text('Engineer from '),new declui.template.Val(function(state){ return state.getHomeAddress().getCity(); })]))]))]))]);
@@ -59,6 +63,7 @@ declui.Address.prototype.getCity = function() {
 
 declui.Address.prototype.setCity = function(City) {
   this.City = City;
+  declui.global.update();
 };
 
 declui.Address.prototype.getStreet = function() {
@@ -67,6 +72,7 @@ declui.Address.prototype.getStreet = function() {
 
 declui.Address.prototype.setStreet = function(Street) {
   this.Street = Street;
+  declui.global.update();
 };
 
 declui.Address.prototype.getNumber = function() {
@@ -75,6 +81,7 @@ declui.Address.prototype.getNumber = function() {
 
 declui.Address.prototype.setNumber = function(Number) {
   this.Number = Number;
+  declui.global.update();
 };
 
 

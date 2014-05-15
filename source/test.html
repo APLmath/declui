@@ -12,8 +12,10 @@ var temp = new declui.template.List([
     new declui.template.Div(new declui.template.List([
       new declui.template.Text('Header'),
       new declui.template.Div(new declui.template.List([
-        new declui.template.Text('Item 1'),
-        new declui.template.Text('Item 2')
+        new declui.template.Text('The state times 2: '),
+        new declui.template.Val(
+          function(state) { return state * 2 }
+        )
       ]))
     ])),
     new declui.template.Text('No items... :(')

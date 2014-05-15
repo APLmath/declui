@@ -33,6 +33,13 @@ declui.template.If.prototype.generate = function(state, container) {
           generate(state, container));
 };
 
+declui.template.Val = function(expression) {
+  this.expression = expression;
+};
+declui.template.Val.prototype.generate = function(state, container) {
+  return new declui.dom.Val(this.expression, this.expression(state));
+};
+
 declui.template.Text = function(string) {
   this.string = string;
 };
@@ -105,6 +112,17 @@ declui.dom.If.prototype.mutate = function(state, container, lastChildNode) {
     }
   }
   return this.domList.nodeList[this.domList.nodeList.length - 1]
+};
+
+declui.dom.Val = function(expression, string) {
+  this.node = document.createTextNode(string)
+  this.expression = expression;
+
+  this.nodeList = [this.node];
+};
+declui.dom.Val.prototype.mutate = function(state, container, lastChildNode) {
+  this.node.textContent = this.expression(state);
+  return this.nodeList[0];
 };
 
 declui.dom.Text = function(string) {
